@@ -1,5 +1,6 @@
 .vscode/
 .vscode/*
+config.json
 
 # GitHub defaults start here
 # Byte-compiled / optimized / DLL files

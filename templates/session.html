@@ -30,6 +30,8 @@
             socket = io.connect('http://' + document.domain + ':' + location.port);
             socket.on("connect", () => {
                 console.log("connected");
+                const parts = window.location.href.split('/');
+                socket.emit("whichProf", {"code": parts.pop() || parts.pop()});
             })
             socket.on("answer", json => {
                 console.log("Recieved message", json)
