@@ -27,7 +27,7 @@
             $("#messageInput").val("");
         });
         $(() => {
-            socket = io.connect('http://' + document.domain + ':' + location.port);
+            socket = io.connect('https://' + document.domain + ':' + location.port);
             socket.on("connect", () => {
                 console.log("connected");
                 const parts = window.location.href.split('/');
