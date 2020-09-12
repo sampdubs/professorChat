@@ -3,14 +3,17 @@ from json import load
 from twilio.rest import Client
 from twilio.twiml.messaging_response import MessagingResponse
 from flask_socketio import SocketIO
+import os
 
 PHONE_NUMBERS = {
     "PRAUS": "+12023095568",
     "SAM": "+16782451345"
 }
 
-cred = load(open("config.json"))
-client = Client(cred["account_sid"], cred["auth_token"])
+# cred = load(open("config.json"))
+account_sid = os.environ.get('TWILIO_SID', "")
+auth_token = os.environ.get('AUTH_TOKEN', "")
+client = Client(account_sid, auth_token)
 
 app = Flask(__name__)
 app.config['TEMPLATES_AUTO_RELOAD'] = True

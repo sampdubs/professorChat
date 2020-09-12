@@ -1,6 +1,7 @@
 .vscode/
 .vscode/*
 config.json
+*.env
 
 # GitHub defaults start here
 # Byte-compiled / optimized / DLL files
