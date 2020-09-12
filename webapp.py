@@ -70,4 +70,4 @@ def sendText(json, methods=["GET", "POST"]):
 
 
 if __name__ == "__main__":
-    sio.run(app, debug=True)
+    sio.run(app, debug=True, port=int(os.environ.get('PORT', 33507)))
