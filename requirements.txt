@@ -3,3 +3,4 @@ gunicorn
 eventlet
 twilio
 flask-socketio
+Flask-Sockets
