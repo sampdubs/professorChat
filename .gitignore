@@ -1,3 +1,7 @@
+.vscode/
+.vscode/*
+
+# GitHub defaults start here
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
