@@ -27,7 +27,9 @@
             $("#messageInput").val("");
         });
         $(() => {
-            window.location.protocol = "http:";
+            if (window.location.protocol !== "http:") {
+                window.location.protocol = "http:";
+            }
             socket = io.connect('https://' + document.domain + ':' + location.port);
             socket.on("connect", () => {
                 console.log("connected");
