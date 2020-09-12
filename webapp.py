@@ -65,6 +65,6 @@ def sendText(sid, json, methods=["GET", "POST"]):
     queue.append((sid, json["message"]))
 
 
+app = socketio.Middleware(sio, app)
 if __name__ == "__main__":
-    app = socketio.Middleware(sio, app)
     eventlet.wsgi.server(eventlet.listen(('', 8080)), app)
