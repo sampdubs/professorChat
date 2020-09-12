@@ -18,9 +18,9 @@
         <a href="/">Back</a>
         <br>
         <form>
-            <label for="messageInput">Type your message here:</label>
-            <input type="text" id="messageInput" name="messageInput" />
-            <input type="submit" />
+            <input type="text" id="nameInput" name="nameInput" placeholder="Type your name here"/>
+            <input type="text" id="messageInput" name="messageInput" placeholder="Type your message here"/>
+            <input type="submit" id="submit" disabled=true/>
         </form>
         <br>
         <div style="display: block; border-width: 2px; border-radius: 16px; min-height: 400px;" id="messageContainer"></div>
@@ -31,25 +31,34 @@
         let socket;
         $("form").submit(e => {
             e.preventDefault();
+            const name = $("#nameInput").val();
             const message = $("#messageInput").val();
-            $("#messageContainer").append(`<p>You: ${message}</p>`);
-            socket.emit("question", {message})
+            $("#messageContainer").append(`<p>${name}: ${message}</p>`);
+            socket.emit("question", {"message": `${name}: ${message}`})
             $("#messageInput").val("");
         });
+
+        $("input[type=text]").keyup(function(){
+            $("#submit").attr("disabled", ($("#messageInput").val() == "") || ($("#nameInput").val() == ""));
+        });
+
         $(() => {
             if (window.location.protocol !== "http:") {
                 window.location.protocol = "http:";
             }
+
             socket = io.connect('https://' + document.domain + ':' + location.port);
             socket.on("connect", () => {
                 console.log("connected");
                 const parts = window.location.href.split('/');
                 socket.emit("whichProf", {"code": parts.pop() || parts.pop()});
-            })
+            });
+
             socket.on("answer", json => {
                 console.log("Recieved message", json)
                 $("#messageContainer").append(`<p>Professor: ${json.message}</p>`);
             });
+            
             socket.on("resp", json => {
                 console.log("Recieved message", json)
                 $("#messageContainer").append(`<p>Professor: ${json.message}</p>`);
