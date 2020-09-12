@@ -6,7 +6,7 @@ from flask_socketio import SocketIO
 import os
 
 PHONE_NUMBERS = {
-    "PRAUS": "+12023095568",
+    "PRAUS": "+12023095567",
     "SAM": "+16782451345"
 }
 
