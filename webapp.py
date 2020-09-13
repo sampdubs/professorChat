@@ -7,6 +7,7 @@ import os
 
 PHONE_NUMBERS = {
     "PRAUS": "+12023095567",
+    "BRETT": "+16172302319",
     "SAM": "+16782451345"
 }
 
