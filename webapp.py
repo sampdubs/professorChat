@@ -42,8 +42,9 @@ def smsResponse():
         if len(queue) > 1:
             queue.pop(0)
             sending = [(sidToCode[queue[0][0]], queue[0][1])]
-            for query in queue[1:]:
-                if query[0] == queue[0][0]:
+            for i in range(len(queue) - 1, 0, -1):
+                if queue[i][0] == queue[0][0]:
+                    query = queue.pop(i)
                     sending.append((sidToCode[query[0]], query[1]))
             for outMessage in sending:
                 sendQuestion(*outMessage)
