@@ -41,8 +41,7 @@ def startSession(code):
 @app.route("/sms_response", methods=['GET', 'POST'])
 def smsResponse():
     message = request.values.get('Body', None)
-    from_number = request.values.get('From', None)
-    code = code
+    code = REVERSE_PHONE_NUMBERS[request.values.get('From', None)]
     queue = queues[code]
     print("QUEUE:", queue)
     if queue:
