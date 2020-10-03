@@ -74,6 +74,8 @@ def sendText(json, methods=["GET", "POST"]):
     elif queue[0][0] == sid:
         sendQuestion(sidToCode[sid], json["message"])
         return
+    else:
+        queue.pop(0)
     queue.append((sid, json["message"]))
     print("QUEUE:", queue)
 
