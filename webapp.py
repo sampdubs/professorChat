@@ -77,7 +77,7 @@ def sendText(json, methods=["GET", "POST"]):
         sendQuestion(sidToCode[sid], json["message"])
     elif queue[0][0] == sid:
         sendQuestion(sidToCode[sid], json["message"])
-    alreadyResponded = False
+        alreadyResponded = False
         return
     elif alreadyResponded:
         sendQuestion(sidToCode[sid], json["message"])
