@@ -60,7 +60,7 @@
             
             socket.on("resp", json => {
                 console.log("Recieved message", json)
-                $("#messageContainer").append(`<p>Professor: ${json.message}</p>`);
+                $("#messageContainer").append(`<p>Professor${json.special ? " (to all)" : ""}: ${json.message}</p>`);
                 $("audio")[0].play();
             });
         });

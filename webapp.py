@@ -42,11 +42,22 @@ def startSession(code):
 def smsResponse():
     message = request.values.get('Body', None)
     from_number = request.values.get('From', None)
-    queue = queues[REVERSE_PHONE_NUMBERS[from_number]]
+    code = code
+    queue = queues[code]
     print("QUEUE:", queue)
     if queue:
+        if message.startswith("*"):
+            if message.startswith("**"):
+                sendResponse(message.lstrip("*"), special=True)
+                return str(MessagingResponse())
+
+            for sid in sidToCode:
+                if code == sidToCode[sid]:
+                    sendResponse(message.lstrip("*"), room=sid, special=True)
+            return str(MessagingResponse())
+
         global alreadyResponded
-        alreadyResponded[REVERSE_PHONE_NUMBERS[from_number]] = True
+        alreadyResponded[code] = True
         respondingTo = queue[0]
         sendResponse(message, room=respondingTo[0])
         print("Emitted message", message, "to", respondingTo)
@@ -59,12 +70,12 @@ def smsResponse():
                     sending.append((sidToCode[query[0]], query[1]))
             for outMessage in sending:
                 sendQuestion(*outMessage)
-            alreadyResponded[REVERSE_PHONE_NUMBERS[from_number]] = False
+            alreadyResponded[code] = False
         print("QUEUE:", queue)
     return str(MessagingResponse())
 
-def sendResponse(message, room=None):
-    sio.emit("resp", {"message": message}, room=room)
+def sendResponse(message, room=None, special=False):
+    sio.emit("resp", {"message": message, "special": special}, room=room)
 
 def sendQuestion(numberCode, message):
     client.messages.create(
