@@ -1,5 +1,4 @@
 from flask import Flask, render_template, request
-from json import load
 from twilio.rest import Client
 from twilio.twiml.messaging_response import MessagingResponse
 from flask_socketio import SocketIO
@@ -11,7 +10,6 @@ PHONE_NUMBERS = {
     "SAM": "+16782451345"
 }
 
-# cred = load(open("config.json"))
 account_sid = os.environ.get('TWILIO_SID', "")
 auth_token = os.environ.get('AUTH_TOKEN', "")
 client = Client(account_sid, auth_token)
@@ -74,7 +72,6 @@ def sendText(json, methods=["GET", "POST"]):
         sendQuestion(sidToCode[sid], json["message"])
         return
     queue.append((sid, json["message"]))
-
 
 if __name__ == "__main__":
     sio.run(app, debug=True, host="0.0.0.0", port=int(os.environ.get('PORT')))
