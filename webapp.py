@@ -59,6 +59,7 @@ def smsResponse():
                     sending.append((sidToCode[query[0]], query[1]))
             for outMessage in sending:
                 sendQuestion(*outMessage)
+            alreadyResponded[REVERSE_PHONE_NUMBERS[from_number]] = False
         print("QUEUE:", queue)
     return str(MessagingResponse())
 
