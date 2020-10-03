@@ -53,7 +53,7 @@ def sendResponse(message, room=None):
     sio.emit("resp", {"message": message}, room=room)
 
 def sendQuestion(numberCode, message):
-    message = client.messages.create(
+    client.messages.create(
         body=message,
         from_="+17253732428",
         to=PHONE_NUMBERS[numberCode])
@@ -66,12 +66,9 @@ def saveCode(json, methods=["GET", "POST"]):
 def sendText(json, methods=["GET", "POST"]):
     sid = request.sid
     print("Recieved Qestion from", sid, "Content:", json["message"])
-    if not queue:
-        sendQuestion(sidToCode[sid], json["message"])
-    elif queue[0][0] == sid:
-        sendQuestion(sidToCode[sid], json["message"])
-        return
-    queue.append((sid, json["message"]))
+    sendQuestion(sidToCode[sid], json["message"])
+    if not(queue and queue[0][0] == sid):
+        queue.append((sid, json["message"]))
 
 if __name__ == "__main__":
     sio.run(app, debug=True, host="0.0.0.0", port=int(os.environ.get('PORT')))
