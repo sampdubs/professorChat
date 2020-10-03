@@ -39,7 +39,7 @@ def smsResponse():
     print("QUEUE:", queue)
     if queue:
         global alreadyResponded
-        alreadyResponded = False
+        alreadyResponded = True
         respondingTo = queue[0]
         sendResponse(message, room=respondingTo[0])
         print("Emitted message", message, "to", respondingTo)
