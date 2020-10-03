@@ -24,7 +24,7 @@ app = Flask(__name__)
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 sio =  SocketIO(app)
 
-queues = {}
+queues = {code: [] for code in PHONE_NUMBERS}
 sidToCode = {}
 alreadyResponded = False
 
