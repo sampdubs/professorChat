@@ -10,6 +10,12 @@ PHONE_NUMBERS = {
     "SAM": "+16782451345"
 }
 
+REVERSE_PHONE_NUMBERS = {
+    "+12023095567": "PRAUS",
+    "+16172302319": "BRETT",
+    "+16782451345": "SAM"
+}
+
 account_sid = os.environ.get('TWILIO_SID', "")
 auth_token = os.environ.get('AUTH_TOKEN', "")
 client = Client(account_sid, auth_token)
@@ -18,7 +24,7 @@ app = Flask(__name__)
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 sio =  SocketIO(app)
 
-queue = []
+queues = {}
 sidToCode = {}
 alreadyResponded = False
 
@@ -36,6 +42,7 @@ def startSession(code):
 def smsResponse():
     message = request.values.get('Body', None)
     from_number = request.values.get('From', None)
+    queue = queues[REVERSE_PHONE_NUMBERS[from_number]]
     print("QUEUE:", queue)
     if queue:
         global alreadyResponded
@@ -73,14 +80,16 @@ def sendText(json, methods=["GET", "POST"]):
     sid = request.sid
     print("Recieved Qestion from", sid, "Content:", json["message"])
     global alreadyResponded
+    code = sidToCode[sid]
+    queue = queues[code]
     if not queue:
-        sendQuestion(sidToCode[sid], json["message"])
+        sendQuestion(code, json["message"])
     elif queue[0][0] == sid:
-        sendQuestion(sidToCode[sid], json["message"])
+        sendQuestion(code, json["message"])
         alreadyResponded = False
         return
     elif alreadyResponded:
-        sendQuestion(sidToCode[sid], json["message"])
+        sendQuestion(code, json["message"])
         queue.pop(0)
     alreadyResponded = False
     queue.append((sid, json["message"]))
