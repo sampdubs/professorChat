@@ -43,24 +43,25 @@ def smsResponse():
     message = request.values.get('Body', None)
     code = REVERSE_PHONE_NUMBERS[request.values.get('From', None)]
     queue = queues[code]
-    print("QUEUE:", queue)
-    if queue:
-        if message.startswith("*"):
-            if message.startswith("**"):
-                sendResponse(message.lstrip("*"), special=True)
-                for prof in PHONE_NUMBERS:
-                    if prof != "BRETT" and prof != code:
-                        sendQuestion(prof, f"{code} (to all): {message.lstrip('*')}")
-                return str(MessagingResponse())
 
-            for sid in sidToCode:
-                if code == sidToCode[sid]:
-                    sendResponse(message.lstrip("*"), room=sid, special=True)
+    if message.startswith("*"):
+        if message.startswith("**"):
+            sendResponse(message.lstrip("*"), special=True)
             for prof in PHONE_NUMBERS:
                 if prof != "BRETT" and prof != code:
-                    sendQuestion(prof, f"{code} (to section): {message.lstrip('*')}")
+                    sendQuestion(prof, f"{code} (to all): {message.lstrip('*')}")
             return str(MessagingResponse())
 
+        for sid in sidToCode:
+            if code == sidToCode[sid]:
+                sendResponse(message.lstrip("*"), room=sid, special=True)
+        for prof in PHONE_NUMBERS:
+            if prof != "BRETT" and prof != code:
+                sendQuestion(prof, f"{code} (to section): {message.lstrip('*')}")
+        return str(MessagingResponse())
+
+    print("QUEUE:", queue)
+    if queue:
         global alreadyResponded
         alreadyResponded[code] = True
         respondingTo = queue[0]
