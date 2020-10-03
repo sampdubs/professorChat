@@ -18,7 +18,6 @@ app = Flask(__name__)
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 sio =  SocketIO(app)
 
-# queues = {}
 queue = []
 sidToCode = {}
 
@@ -35,11 +34,9 @@ def startSession(code):
 @app.route("/sms_response", methods=['GET', 'POST'])
 def smsResponse():
     message = request.values.get('Body', None)
-    fromNumber = request.values.get('From', None)
-    print("FROM:", fromNumber)
+    from_number = request.values.get('From', None)
     if queue:
         respondingTo = queue[0]
-        message = request.values.get('Body', None)
         sendResponse(message, room=respondingTo[0])
         print("Emitted message", message, "to", respondingTo)
         if len(queue) > 1:
@@ -70,9 +67,12 @@ def saveCode(json, methods=["GET", "POST"]):
 def sendText(json, methods=["GET", "POST"]):
     sid = request.sid
     print("Recieved Qestion from", sid, "Content:", json["message"])
-    sendQuestion(sidToCode[sid], json["message"])
-    if not(queue and queue[0][0] == sid):
-        queue.append((sid, json["message"]))
+    if not queue:
+        sendQuestion(sidToCode[sid], json["message"])
+    elif queue[0][0] == sid:
+        sendQuestion(sidToCode[sid], json["message"])
+        return
+    queue.append((sid, json["message"]))
 
 if __name__ == "__main__":
     sio.run(app, debug=True, host="0.0.0.0", port=int(os.environ.get('PORT')))
