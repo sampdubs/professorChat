@@ -18,6 +18,7 @@ app = Flask(__name__)
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 sio =  SocketIO(app)
 
+# queues = {}
 queue = []
 sidToCode = {}
 
@@ -33,6 +34,9 @@ def startSession(code):
 
 @app.route("/sms_response", methods=['GET', 'POST'])
 def smsResponse():
+    message = request.values.get('Body', None)
+    fromNumber = request.values.get('From', None)
+    print("FROM:", fromNumber)
     if queue:
         respondingTo = queue[0]
         message = request.values.get('Body', None)
