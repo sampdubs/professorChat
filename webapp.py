@@ -48,11 +48,17 @@ def smsResponse():
         if message.startswith("*"):
             if message.startswith("**"):
                 sendResponse(message.lstrip("*"), special=True)
+                for prof in PHONE_NUMBERS:
+                    if prof != "BRETT":
+                        sendQuestion(prof, f"{code} (to all): {message.lstrip('*')}")
                 return str(MessagingResponse())
 
             for sid in sidToCode:
                 if code == sidToCode[sid]:
                     sendResponse(message.lstrip("*"), room=sid, special=True)
+            for prof in PHONE_NUMBERS:
+                if prof != "BRETT":
+                    sendQuestion(prof, f"{code} (to section): {message.lstrip('*')}")
             return str(MessagingResponse())
 
         global alreadyResponded
