@@ -35,6 +35,7 @@ def startSession(code):
 def smsResponse():
     message = request.values.get('Body', None)
     from_number = request.values.get('From', None)
+    print("QUEUE:", queue)
     if queue:
         respondingTo = queue[0]
         sendResponse(message, room=respondingTo[0])
@@ -48,6 +49,7 @@ def smsResponse():
                     sending.append((sidToCode[query[0]], query[1]))
             for outMessage in sending:
                 sendQuestion(*outMessage)
+        print("QUEUE:", queue)
     return str(MessagingResponse())
 
 def sendResponse(message, room=None):
@@ -73,6 +75,7 @@ def sendText(json, methods=["GET", "POST"]):
         sendQuestion(sidToCode[sid], json["message"])
         return
     queue.append((sid, json["message"]))
+    print("QUEUE:", queue)
 
 if __name__ == "__main__":
     sio.run(app, debug=True, host="0.0.0.0", port=int(os.environ.get('PORT')))
