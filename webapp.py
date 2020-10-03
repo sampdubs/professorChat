@@ -73,15 +73,16 @@ def sendText(json, methods=["GET", "POST"]):
     sid = request.sid
     print("Recieved Qestion from", sid, "Content:", json["message"])
     global alreadyResponded
-    alreadyResponded = False
     if not queue:
         sendQuestion(sidToCode[sid], json["message"])
     elif queue[0][0] == sid:
         sendQuestion(sidToCode[sid], json["message"])
+    alreadyResponded = False
         return
     elif alreadyResponded:
         sendQuestion(sidToCode[sid], json["message"])
         queue.pop(0)
+    alreadyResponded = False
     queue.append((sid, json["message"]))
     print("QUEUE:", queue)
 
