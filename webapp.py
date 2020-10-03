@@ -26,7 +26,7 @@ sio =  SocketIO(app)
 
 queues = {code: [] for code in PHONE_NUMBERS}
 sidToCode = {}
-alreadyResponded = False
+alreadyResponded = {code: False for code in PHONE_NUMBERS}
 
 @app.route("/", methods=['GET', 'POST'])
 def enterCode():
@@ -46,7 +46,7 @@ def smsResponse():
     print("QUEUE:", queue)
     if queue:
         global alreadyResponded
-        alreadyResponded = True
+        alreadyResponded[REVERSE_PHONE_NUMBERS[from_number]] = True
         respondingTo = queue[0]
         sendResponse(message, room=respondingTo[0])
         print("Emitted message", message, "to", respondingTo)
@@ -86,12 +86,12 @@ def sendText(json, methods=["GET", "POST"]):
         sendQuestion(code, json["message"])
     elif queue[0][0] == sid:
         sendQuestion(code, json["message"])
-        alreadyResponded = False
+        alreadyResponded[code] = False
         return
-    elif alreadyResponded:
+    elif alreadyResponded[code]:
         sendQuestion(code, json["message"])
         queue.pop(0)
-    alreadyResponded = False
+    alreadyResponded[code] = False
     queue.append((sid, json["message"]))
     print("QUEUE:", queue)
 
