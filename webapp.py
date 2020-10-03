@@ -49,7 +49,7 @@ def smsResponse():
             if message.startswith("**"):
                 sendResponse(message.lstrip("*"), special=True)
                 for prof in PHONE_NUMBERS:
-                    if prof != "BRETT":
+                    if prof != "BRETT" and prof != code:
                         sendQuestion(prof, f"{code} (to all): {message.lstrip('*')}")
                 return str(MessagingResponse())
 
@@ -57,7 +57,7 @@ def smsResponse():
                 if code == sidToCode[sid]:
                     sendResponse(message.lstrip("*"), room=sid, special=True)
             for prof in PHONE_NUMBERS:
-                if prof != "BRETT":
+                if prof != "BRETT" and prof != code:
                     sendQuestion(prof, f"{code} (to section): {message.lstrip('*')}")
             return str(MessagingResponse())
 
