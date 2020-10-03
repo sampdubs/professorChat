@@ -48,16 +48,16 @@ def smsResponse():
         if message.startswith("**"):
             sendResponse(message.lstrip("*"), special=True)
             for prof in PHONE_NUMBERS:
-                if prof != "BRETT" and prof != code:
-                    sendQuestion(prof, f"{code} (to all): {message.lstrip('*')}")
+                if prof != "SAM" and prof != code:
+                    sendQuestion(prof, f"{code} (to all, do not reply): {message.lstrip('*')}")
             return str(MessagingResponse())
 
         for sid in sidToCode:
             if code == sidToCode[sid]:
                 sendResponse(message.lstrip("*"), room=sid, special=True)
         for prof in PHONE_NUMBERS:
-            if prof != "BRETT" and prof != code:
-                sendQuestion(prof, f"{code} (to section): {message.lstrip('*')}")
+            if prof != "SAM" and prof != code:
+                sendQuestion(prof, f"{code} (to section, do not reply): {message.lstrip('*')}")
         return str(MessagingResponse())
 
     print("QUEUE:", queue)
