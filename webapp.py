@@ -16,6 +16,12 @@ REVERSE_PHONE_NUMBERS = {
     "+16782451345": "SAM"
 }
 
+CODE_TO_NAME = {
+    "PRAUS": "Mark Prausnitz",
+    "BRETT": "Blair Brettmann",
+    "SAM": "You Shouldn't be on this Page"
+}
+
 account_sid = os.environ.get('TWILIO_SID', "")
 auth_token = os.environ.get('AUTH_TOKEN', "")
 client = Client(account_sid, auth_token)
@@ -27,6 +33,7 @@ sio =  SocketIO(app)
 queues = {code: [] for code in PHONE_NUMBERS}
 sidToCode = {}
 alreadyResponded = {code: False for code in PHONE_NUMBERS}
+everyoneMessages = {code: [] for code in PHONE_NUMBERS}
 
 @app.route("/", methods=['GET', 'POST'])
 def enterCode():
@@ -35,7 +42,7 @@ def enterCode():
 @app.route("/<code>", methods=['GET', 'POST'])
 def startSession(code):
     if code in PHONE_NUMBERS:
-        return render_template("session.html", code=code)
+        return render_template("session.html", name=CODE_TO_NAME[code])
     return render_template("badCode.html", code=code)
 
 @app.route("/sms_response", methods=['GET', 'POST'])
@@ -46,18 +53,20 @@ def smsResponse():
 
     if message.startswith("*"):
         if message.startswith("**"):
-            sendResponse(message.lstrip("*"), special=True)
+            sendResponse(message.lstrip("* "), special=True)
             for prof in PHONE_NUMBERS:
-                if prof != "SAM" and prof != code:
-                    sendQuestion(prof, f"{code} (to all, do not reply): {message.lstrip('*')}")
+                if prof != "BRETT" and prof != code:
+                    sendQuestion(prof, f"{code} (to all, do not reply): {message.lstrip('* ')}")
+                everyoneMessages[prof].append(message.lstrip("* "))
             return str(MessagingResponse())
 
         for sid in sidToCode:
             if code == sidToCode[sid]:
-                sendResponse(message.lstrip("*"), room=sid, special=True)
+                sendResponse(message.lstrip("* "), room=sid, special=True)
         for prof in PHONE_NUMBERS:
-            if prof != "SAM" and prof != code:
-                sendQuestion(prof, f"{code} (to section, do not reply): {message.lstrip('*')}")
+            if prof != "BRETT" and prof != code:
+                sendQuestion(prof, f"{code} (to section, do not reply): {message.lstrip('* ')}")
+        everyoneMessages[code].append(message.lstrip("* "))
         return str(MessagingResponse())
 
     print("QUEUE:", queue)
@@ -92,6 +101,8 @@ def sendQuestion(numberCode, message):
 @sio.on("whichProf")
 def saveCode(json, methods=["GET", "POST"]):
     sidToCode[request.sid] = json["code"]
+    for message in everyoneMessages[json["code"]]:
+        sendResponse(message, room=request.sid, special=True)
 
 @sio.on("question")
 def sendText(json, methods=["GET", "POST"]):
